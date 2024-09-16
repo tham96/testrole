@@ -126,9 +126,8 @@ $(function () {
           id: data.id,
       },
       success: function(response) {
-        role = response;
-        console.log(role);
-        $('#editRole').html(response);
+        $('#bodyEditRole').html(response);
+        $('#editRole').modal('show');
       },
       error: function(response) {
           var jsonResponse = JSON.parse(response.responseText);

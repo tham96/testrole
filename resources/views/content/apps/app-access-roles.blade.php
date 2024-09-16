@@ -28,6 +28,7 @@
 @vite([
   'resources/assets/js/app-access-roles.js',
   'resources/assets/js/modal-add-role.js',
+  'resources/assets/js/modal-edit-role.js',
 ])
 @endsection
 
@@ -73,9 +74,22 @@
     <!--/ Role Table -->
   </div>
 </div>
-<div id="editRole" class="modal fade" id="editRoleModal" tabindex="-1" aria-hidden="true">
-
+<!-- Add Role Modal -->
+<div class="modal fade" id="editRoleModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-simple modal-dialog-centered modal-add-new-role">
+    <div class="modal-content">
+      <div class="modal-body">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="text-center mb-6">
+          <h4 class="role-title mb-2">Edit Role</h4>
+        </div>
+        <!-- Add role form -->
+        <form id="bodyEditRole" method="POST" action="{{route('role.edit')}}" class="row g-6" ></form>
+      <!--/ Add role form -->
+    </div>
+  </div>
 </div>
+<!--/ Add Role Modal -->
 <!--/ Role cards -->
 
 <!-- Add Role Modal -->

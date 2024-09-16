@@ -33,8 +33,12 @@ class AccessRoles extends Controller
   public function editRole(Request $request)
   {
     try {
-      $role = Role::update($request->all());
+      $role = Role::find($request->id);
       if (!empty($role)) {
+        $role['name'] = $request->name;
+        $role['display_name'] = $request->display_name;
+        $role['description'] = $request->description;
+        $role->save();
         return redirect(route('app-access-roles'));
       }
     } catch (\Exception $e) {
@@ -45,9 +49,9 @@ class AccessRoles extends Controller
   public function getRole(Request $request)
   {
     try {
-      $role = Role::find($request->id)->first();
+      $role = Role::find($request->id);
       if (!empty($role)) {
-        return view('_partials._modals.modal-edit-role.blade', ["roles" => $role]);
+        return view('_partials._modals.modal-edit-role', ["role" => $role]);
       }
     } catch (\Exception $e) {
       \Log::info($e->getMessage());
