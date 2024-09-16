@@ -233,6 +233,8 @@ Route::get('/app/access-permission', [AccessPermission::class, 'index'])->name('
 // Role
 Route::get('/app/access-roles', [AccessRoles::class, 'index'])->name('app-access-roles');
 Route::post('/app/add-role', [AccessRoles::class, 'addRole'])->name('role.create');
+Route::post('/app/edit-role', [AccessRoles::class, 'editRole'])->name('role.edit');
+Route::get('/app/get-role', [AccessRoles::class, 'getRole'])->name('role.get');
 // Permission
 Route::get('/app/access-permission', [AccessPermission::class, 'index'])->name('app-access-permission');
 // pages

@@ -513,7 +513,7 @@ $navbarDetached = ($navbarDetached ?? '');
               @else
                 <li>
                   <div class="d-grid px-2 pt-2 pb-1">
-                    <a class="btn btn-sm btn-danger d-flex" href="{{ Route::has('login') ? route('login') : url('auth/login-basic') }}">
+                    <a class="btn btn-sm btn-danger d-flex" href="{{ Route::has('login') ? url('auth/login-basic') : "" }}">
                       <small class="align-middle">Login</small>
                       <i class="ti ti-login ms-2 ti-14px"></i>
                     </a>

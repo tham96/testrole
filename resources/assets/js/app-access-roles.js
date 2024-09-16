@@ -14,7 +14,7 @@ $(function () {
   // Users List datatable
   if (dtUserTable.length) {
     var dtUser = dtUserTable.DataTable({
-      ajax: assetsPath + 'json/user-list.json', // JSON file to add data
+      ajax: assetsPath + 'json/role-list.json', // JSON file to add data
       columns: [
         // columns according to JSON
         { data: 'role' },
@@ -29,16 +29,15 @@ $(function () {
           render: function (data, type, full, meta) {
             var $role = full['name'];
             var roleBadgeObj = {
-              // Subscriber: '<i class="ti ti-crown ti-md text-primary me-2"></i>',
-              // Author: '<i class="ti ti-edit ti-md text-warning me-2"></i>',
-              support: '<i class="ti ti-user ti-md text-success me-2"></i>',
-              usser: '<i class="ti ti-chart-pie ti-md text-info me-2"></i>',
-              admin: '<i class="ti ti-device-desktop ti-md text-danger me-2"></i>'
+              Author: '<i class="ti ti-crown ti-md text-primary me-2"></i>',
+              Test: '<i class="ti ti-edit ti-md text-warning me-2"></i>',
+              User: '<i class="ti ti-user ti-md text-success me-2"></i>',
+              Support: '<i class="ti ti-chart-pie ti-md text-info me-2"></i>',
+              Admin: '<i class="ti ti-device-desktop ti-md text-danger me-2"></i>'
             };
             return (
               "<span class='text-truncate d-flex align-items-center text-heading'>" +
-              roleBadgeObj[$role] +
-              $role +
+              roleBadgeObj[$role] != undefined ? roleBadgeObj[$role] + $role : $role +
               '</span>'
             );
           }
@@ -71,14 +70,7 @@ $(function () {
             return (
               '<div class="d-flex align-items-center">' +
               '<a href="javascript:;" class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill delete-record"><i class="ti ti-trash ti-md"></i></a>' +
-              '<a href="' +
-              userView +
-              '" class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill"><i class="ti ti-eye ti-md"></i></a>' +
-              '<a href="javascript:;" class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical ti-md"></i></a>' +
-              '<div class="dropdown-menu dropdown-menu-end m-0">' +
-              '<a href="javascript:;"" class="dropdown-item">Edit</a>' +
-              '<a href="javascript:;" class="dropdown-item">Suspend</a>' +
-              '</div>' +
+              '<button data-bs-target="#editRoleModal" data-bs-toggle="modal" class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill edit-record"><i class="ti ti-pencil ti-md"></i></button>' +
               '</div>'
             );
           }
@@ -87,8 +79,8 @@ $(function () {
       order: [[2, 'desc']],
       dom:
         '<"row"' +
-        '<"col-md-2"<l>>' +
-        '<"col-md-10"<"dt-action-buttons text-xl-end text-lg-start text-md-end text-start d-flex align-items-center justify-content-end flex-md-row flex-column mb-6 mb-md-0"fB>>' +
+        '<"col-md-3"<l>>' +
+        '<"col-md-9"<"dt-action-buttons text-xl-end text-lg-start text-md-end text-start d-flex align-items-center justify-content-end flex-md-row flex-column mb-6 mb-md-0"fB>>' +
         '>t' +
         '<"row"' +
         '<"col-sm-12 col-md-6"i>' +
@@ -119,6 +111,31 @@ $(function () {
   // Delete Record
   $('.datatables-users tbody').on('click', '.delete-record', function () {
     dtUser.row($(this).parents('tr')).remove().draw();
+  });
+
+  $('.datatables-users tbody').on('click', '.edit-record', function () {
+    let index = dtUser.row($(this).parents('tr'))[0][0];
+    let arayData = dtUser.row($(this).parents('tr')).context[0].aoData;
+    let data = arayData[index]._aData;
+    console.log(data);
+    var role = {}
+    $.ajax({
+      url: '/app/get-role',
+      type: 'GET',
+      data: {
+          id: data.id,
+      },
+      success: function(response) {
+        role = response;
+        console.log(role);
+        $('#editRole').html(response);
+      },
+      error: function(response) {
+          var jsonResponse = JSON.parse(response.responseText);
+          var data = jsonResponse.data;
+          alert(data);
+      }
+    });
   });
 
   // Filter form control to default size

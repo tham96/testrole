@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->string('email')->unique();
             $table->string('password');
             $table->string('status', 20)->index();
+            $table->unsignedInteger('role_id');
             $table->rememberToken();
             $table->timestamps();
         });

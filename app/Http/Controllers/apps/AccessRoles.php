@@ -11,7 +11,7 @@ class AccessRoles extends Controller
   public function index()
   {
     $roles = Role::withCount('users')->get();
-    $path = public_path('assets\json\user-list.json');
+    $path = public_path('assets\json\role-list.json');
     $obj_data = json_decode(file_get_contents($path));
     $obj_data->data = $roles;
     file_put_contents($path, json_encode($obj_data));
@@ -20,17 +20,34 @@ class AccessRoles extends Controller
 
   public function addRole(Request $request)
   {
-    echo ("$request->name");
     try {
       $role = Role::create($request->all());
       if (!empty($role)) {
-        // $roles = Role::withCount('users')->get();
-        // $path = public_path('assets\json\user-list.json');
-        // $obj_data = json_decode(file_get_contents($path));
-        // $obj_data->data = $roles;
-        // file_put_contents($path, json_encode($obj_data));
-        // return view('content.apps.app-access-roles', ["roles" => $roles]);
-        return redirect($this->index());
+        return redirect(route('app-access-roles'));
+      }
+    } catch (\Exception $e) {
+      \Log::info($e->getMessage());
+    }
+  }
+
+  public function editRole(Request $request)
+  {
+    try {
+      $role = Role::update($request->all());
+      if (!empty($role)) {
+        return redirect(route('app-access-roles'));
+      }
+    } catch (\Exception $e) {
+      \Log::info($e->getMessage());
+    }
+  }
+
+  public function getRole(Request $request)
+  {
+    try {
+      $role = Role::find($request->id)->first();
+      if (!empty($role)) {
+        return view('_partials._modals.modal-edit-role.blade', ["roles" => $role]);
       }
     } catch (\Exception $e) {
       \Log::info($e->getMessage());

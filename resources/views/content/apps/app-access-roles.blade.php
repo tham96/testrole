@@ -73,6 +73,9 @@
     <!--/ Role Table -->
   </div>
 </div>
+<div id="editRole" class="modal fade" id="editRoleModal" tabindex="-1" aria-hidden="true">
+
+</div>
 <!--/ Role cards -->
 
 <!-- Add Role Modal -->

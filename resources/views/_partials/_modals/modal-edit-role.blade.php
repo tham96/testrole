@@ -1,18 +1,18 @@
 <!-- Add Role Modal -->
-<div class="modal fade" id="addRoleModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="editRoleModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-simple modal-dialog-centered modal-add-new-role">
     <div class="modal-content">
       <div class="modal-body">
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         <div class="text-center mb-6">
-          <h4 class="role-title mb-2">Add New Role</h4>
+          <h4 class="role-title mb-2">Edit Role</h4>
         </div>
         <!-- Add role form -->
-        <form class="row g-6" method="POST" action="{{route('role.create')}}">
+        <form class="row g-6" method="POST" action="{{route('role.edit')}}">
         @CSRF
           <div class="col-12">
             <label class="form-label" for="name">Role Name</label>
-            <input type="text" id="name" name="name" class="form-control" placeholder="Enter a role name"
+            <input type="text" id="name" name="name" class="form-control" value="{{$role->name}}" placeholder="Enter a role name"
               tabindex="-1" />
           </div>
           <div class="col-12">
@@ -34,6 +34,5 @@
       <!--/ Add role form -->
     </div>
   </div>
-</div>
 </div>
 <!--/ Add Role Modal -->
