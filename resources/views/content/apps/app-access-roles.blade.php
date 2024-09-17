@@ -63,8 +63,7 @@
           <thead>
             <tr>
               <th>Role</th>
-              <th>Display name</th>
-              <th>Description</th>
+              <th>Guard name</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -74,7 +73,11 @@
     <!--/ Role Table -->
   </div>
 </div>
+
 <!-- Add Role Modal -->
+@include('_partials/_modals/modal-add-role')
+<!-- / Add Role Modal -->
+ 
 <div class="modal fade" id="editRoleModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-simple modal-dialog-centered modal-add-new-role">
     <div class="modal-content">
@@ -89,10 +92,4 @@
     </div>
   </div>
 </div>
-<!--/ Add Role Modal -->
-<!--/ Role cards -->
-
-<!-- Add Role Modal -->
-@include('_partials/_modals/modal-add-role')
-<!-- / Add Role Modal -->
 @endsection

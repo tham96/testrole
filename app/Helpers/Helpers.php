@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Permission;
 
 class Helpers
 {
@@ -210,5 +211,10 @@ class Helpers
         }
       }
     }
+  }
+
+  public static function getPermission()
+  {
+    return Permission::select('name')->get();
   }
 }

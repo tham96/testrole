@@ -18,8 +18,7 @@ $(function () {
       columns: [
         // columns according to JSON
         { data: 'role' },
-        { data: 'display_name' },
-        { data: 'description' },
+        { data: 'guard_name' },
         { data: '' }
       ],
       columnDefs: [
@@ -29,11 +28,11 @@ $(function () {
           render: function (data, type, full, meta) {
             var $role = full['name'];
             var roleBadgeObj = {
-              Author: '<i class="ti ti-crown ti-md text-primary me-2"></i>',
-              Test: '<i class="ti ti-edit ti-md text-warning me-2"></i>',
+              writer: '<i class="ti ti-crown ti-md text-primary me-2"></i>',
+              Super_Admin: '<i class="ti ti-edit ti-md text-warning me-2"></i>',
               User: '<i class="ti ti-user ti-md text-success me-2"></i>',
               Support: '<i class="ti ti-chart-pie ti-md text-info me-2"></i>',
-              Admin: '<i class="ti ti-device-desktop ti-md text-danger me-2"></i>'
+              admin: '<i class="ti ti-device-desktop ti-md text-danger me-2"></i>'
             };
             return (
               "<span class='text-truncate d-flex align-items-center text-heading'>" +
@@ -46,18 +45,9 @@ $(function () {
           // Plans
           targets: 1,
           render: function (data, type, full, meta) {
-            var $display_name = full['display_name'];
+            var $guard_name = full['guard_name'];
 
-            return '<span class="text-heading">' + $display_name + '</span>';
-          }
-        },
-        {
-          // User Status
-          targets: 2,
-          render: function (data, type, full, meta) {
-            var $description = full['description'];
-
-            return '<span class="text-heading">' + $description + '</span>';
+            return '<span class="text-heading">' + $guard_name + '</span>';
           }
         },
         {
@@ -110,6 +100,25 @@ $(function () {
   }
   // Delete Record
   $('.datatables-users tbody').on('click', '.delete-record', function () {
+    let index = dtUser.row($(this).parents('tr'))[0][0];
+    let arayData = dtUser.row($(this).parents('tr')).context[0].aoData;
+    let data = arayData[index]._aData;
+    $.ajax({
+      url: '/app/delete-role',
+      type: 'GET',
+      data: {
+          id: data.id,
+      },
+      success: function(response) {
+        console.log(response.message)
+      },
+      error: function(response) {
+          var jsonResponse = JSON.parse(response.responseText);
+          var data = jsonResponse.data;
+          alert(data);
+      }
+    })
+    
     dtUser.row($(this).parents('tr')).remove().draw();
   });
 
