@@ -38,9 +38,8 @@
       <thead>
         <tr>
           <th>Name</th>
-          <th>Assigned To</th>
+          <th>Guard name</th>
           <th>Created Date</th>
-          <th>Actions</th>
         </tr>
       </thead>
     </table>

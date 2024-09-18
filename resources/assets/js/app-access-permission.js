@@ -15,9 +15,8 @@ $(function () {
       columns: [
         // columns according to JSON
         { data: 'name' },
-        { data: 'assigned_to' },
-        { data: 'created_date' },
-        { data: '' }
+        { data: 'guard_name' },
+        { data: 'created_at' },
       ],
       columnDefs: [
         {
@@ -31,9 +30,8 @@ $(function () {
         {
           // User Role
           targets: 1,
-          orderable: false,
           render: function (data, type, full, meta) {
-            // var $assignedTo = full['assigned_to'],
+            var $guard_name = full['guard_name']
             //   $output = '';
             // var roleBadgeObj = {
             //   Admin: '<a href="' + userList + '"><span class="badge me-4 bg-label-primary">Administrator</span></a>',
@@ -47,16 +45,15 @@ $(function () {
             //   var val = $assignedTo[i];
             //   $output += roleBadgeObj[val];
             // }
-            return '<span class="text-nowrap">' + "=====" + '</span>';
+            return '<span class="text-nowrap">' + $guard_name + '</span>';
           }
         },
         {
           // remove ordering from Name
           targets: 2,
-          orderable: false,
           render: function (data, type, full, meta) {
-            var $date = full['created_at'];
-            return '<span class="text-nowrap">' + $date + '</span>';
+            var $created_at = full['created_at'];
+            return '<span class="text-nowrap">' + $created_at + '</span>';
           }
         },
         {

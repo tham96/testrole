@@ -14,7 +14,7 @@
   <div class="col-12">
     <label class="form-label">Choose permissions</label></br>
     @foreach (getPermission() as $permission)
-    <input class="form-check-input" type="checkbox" id="{{$permission['name']}}" name="permission[]" value="{{$permission['id']}}"/>
+    <input class="form-check-input" type="checkbox" id="{{$permission['name']}}" name="permission[]" value="{{$permission['id']}}" {{ in_array($permission['id'], $rolePermissions) ? 'checked' : ''}}/>
     <label class="form-check-label">{{$permission['name']}}</label>
     @endforeach
   </div>

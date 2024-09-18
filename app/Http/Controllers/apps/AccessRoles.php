@@ -66,8 +66,11 @@ class AccessRoles extends Controller
   {
     try {
       $role = Role::find($request->id);
+      $rolePermissions = DB::table("role_has_permissions")->where("role_has_permissions.role_id",$request->id)
+            ->pluck('role_has_permissions.permission_id','role_has_permissions.permission_id')
+            ->all();
       if (!empty($role)) {
-        return view('_partials._modals.modal-edit-role', compact('role'));
+        return view('_partials._modals.modal-edit-role', compact('role', 'rolePermissions'));
       }
     } catch (\Exception $e) {
       \Log::info($e->getMessage());
