@@ -228,8 +228,6 @@ Route::get('/app/user/view/security', [UserViewSecurity::class, 'index'])->name(
 Route::get('/app/user/view/billing', [UserViewBilling::class, 'index'])->name('app-user-view-billing');
 Route::get('/app/user/view/notifications', [UserViewNotifications::class, 'index'])->name('app-user-view-notifications');
 Route::get('/app/user/view/connections', [UserViewConnections::class, 'index'])->name('app-user-view-connections');
-Route::get('/app/access-roles', [AccessRoles::class, 'index'])->name('app-access-roles');
-Route::get('/app/access-permission', [AccessPermission::class, 'index'])->name('app-access-permission');
 // Role
 Route::get('/app/access-roles', [AccessRoles::class, 'index'])->name('app-access-roles');
 Route::get('/app/get-role', [AccessRoles::class, 'getRole'])->name('role.get');

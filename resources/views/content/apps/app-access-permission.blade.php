@@ -37,8 +37,6 @@
     <table class="datatables-permissions table border-top">
       <thead>
         <tr>
-          <th></th>
-          <th></th>
           <th>Name</th>
           <th>Assigned To</th>
           <th>Created Date</th>

@@ -7,12 +7,13 @@ use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\RoleHasPermission;
 
 class AccessRoles extends Controller
 {
   public function index()
   {
-    $roles = Role::withCount('users')->get();
+    $roles = Role::all();
     $path = public_path('assets\json\role-list.json');
     $obj_data = json_decode(file_get_contents($path));
     $obj_data->data = $roles;
@@ -22,7 +23,8 @@ class AccessRoles extends Controller
 
   public function addRole(Request $request)
   {
-    $listPermission = $_POST['permission'];
+    $listPermission = $request->permission;
+    $permission_role = [];
     try {
       $role = [];
       $role['name'] = $request->name;
@@ -30,9 +32,9 @@ class AccessRoles extends Controller
       $newRole = Role::create($role);
       foreach ($listPermission as $item) {
         $permission = Permission::where('name', $item)->first();
-        $permission_role = array('permission_id' => $permission->id,'role_id' => $newRole->id);;
-        DB::table('role_has_permissions')->insert($permission_role);
+        array_push($permission_role, ['permission_id'=>$permission->id, 'role_id'=>$newRole->id]);
       };
+      RoleHasPermission::query()->insert($permission_role);
       return redirect(route('app-access-roles'));
     } catch (\Exception $e) {
       \Log::info($e->getMessage());
@@ -43,20 +45,16 @@ class AccessRoles extends Controller
   {
     try {
       $role = Role::find($request->id);
-      $listPermission = $_POST['permission'];
+      $permissionsID = array_map(
+        function($value) { return (int)$value; },
+        $request->input('permission')
+      );
       if (!empty($role)) {
-        DB::update('update roles set name = ? guard_name = ? where id = ?',[$request->name,$request->guard_name,$request->id]);
-        foreach ($listPermission as $item) {
-          $permission = Permission::where('name', $item)->first();
-          $existed = DB::table('role_has_permissions')
-          ->where('permission_id', '=', $permission->id)
-          ->where('role_id', '=', $role->id)
-          ->get();
-          if(empty($existed)) {
-            $permission_role = array('permission_id' => $permission->id,'role_id' => $role->id);;
-            DB::table('role_has_permissions')->insert($permission_role);
-          }
-        };
+        // DB::update('update roles set name = ? guard_name = ? where id = ?',[$request->name,$request->guard_name,$request->id]);
+        $role->name = $request->name;
+        $role->guard_name = $request->guard_name;
+        $role->save();
+        $role->syncPermissions($permissionsID);
         return redirect(route('app-access-roles'));
       }
     } catch (\Exception $e) {

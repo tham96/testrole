@@ -14,8 +14,6 @@ $(function () {
       ajax: assetsPath + 'json/permissions-list.json', // JSON file to add data
       columns: [
         // columns according to JSON
-        { data: '' },
-        { data: 'id' },
         { data: 'name' },
         { data: 'assigned_to' },
         { data: 'created_date' },
@@ -23,24 +21,8 @@ $(function () {
       ],
       columnDefs: [
         {
-          // For Responsive
-          className: 'control',
-          orderable: false,
-          searchable: false,
-          responsivePriority: 2,
-          targets: 0,
-          render: function (data, type, full, meta) {
-            return '';
-          }
-        },
-        {
-          targets: 1,
-          searchable: false,
-          visible: false
-        },
-        {
           // Name
-          targets: 2,
+          targets: 0,
           render: function (data, type, full, meta) {
             var $name = full['name'];
             return '<span class="text-nowrap text-heading">' + $name + '</span>';
@@ -48,32 +30,32 @@ $(function () {
         },
         {
           // User Role
-          targets: 3,
+          targets: 1,
           orderable: false,
           render: function (data, type, full, meta) {
-            var $assignedTo = full['assigned_to'],
-              $output = '';
-            var roleBadgeObj = {
-              Admin: '<a href="' + userList + '"><span class="badge me-4 bg-label-primary">Administrator</span></a>',
-              Manager: '<a href="' + userList + '"><span class="badge me-4 bg-label-warning">Manager</span></a>',
-              Users: '<a href="' + userList + '"><span class="badge me-4 bg-label-success">Users</span></a>',
-              Support: '<a href="' + userList + '"><span class="badge me-4 bg-label-info">Support</span></a>',
-              Restricted:
-                '<a href="' + userList + '"><span class="badge me-4 bg-label-danger">Restricted User</span></a>'
-            };
-            for (var i = 0; i < $assignedTo.length; i++) {
-              var val = $assignedTo[i];
-              $output += roleBadgeObj[val];
-            }
-            return '<span class="text-nowrap">' + $output + '</span>';
+            // var $assignedTo = full['assigned_to'],
+            //   $output = '';
+            // var roleBadgeObj = {
+            //   Admin: '<a href="' + userList + '"><span class="badge me-4 bg-label-primary">Administrator</span></a>',
+            //   Manager: '<a href="' + userList + '"><span class="badge me-4 bg-label-warning">Manager</span></a>',
+            //   Users: '<a href="' + userList + '"><span class="badge me-4 bg-label-success">Users</span></a>',
+            //   Support: '<a href="' + userList + '"><span class="badge me-4 bg-label-info">Support</span></a>',
+            //   Restricted:
+            //     '<a href="' + userList + '"><span class="badge me-4 bg-label-danger">Restricted User</span></a>'
+            // };
+            // for (var i = 0; i < $assignedTo.length; i++) {
+            //   var val = $assignedTo[i];
+            //   $output += roleBadgeObj[val];
+            // }
+            return '<span class="text-nowrap">' + "=====" + '</span>';
           }
         },
         {
           // remove ordering from Name
-          targets: 4,
+          targets: 2,
           orderable: false,
           render: function (data, type, full, meta) {
-            var $date = full['created_date'];
+            var $date = full['created_at'];
             return '<span class="text-nowrap">' + $date + '</span>';
           }
         },

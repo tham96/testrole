@@ -22,7 +22,12 @@ if (!function_exists('settings')) {
     }
 }
 
-function getPermission()
+function getNamePermission()
 {
 return Permission::select('name')->get();
+}
+
+function getPermission()
+{
+return Permission::select('id', 'name')->get();
 }
