@@ -39,7 +39,8 @@
         <tr>
           <th>Name</th>
           <th>Guard name</th>
-          <th>Created Date</th>
+          <th>Created at</th>
+          <th>Actions</th>
         </tr>
       </thead>
     </table>
@@ -49,6 +50,27 @@
 
 <!-- Modal -->
 @include('_partials/_modals/modal-add-permission')
-@include('_partials/_modals/modal-edit-permission')
+<div class="modal fade" id="editPermission" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-simple">
+    <div class="modal-content">
+      <div class="modal-body">
+        <button type="button" class="btn-close btn-pinned" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="text-center mb-6">
+          <h4 class="mb-2">Edit Permission</h4>
+        </div>
+        <div class="alert alert-warning d-flex align-items-start" role="alert">
+          <span class="alert-icon me-4 rounded-2"><i class="ti ti-alert-triangle ti-md"></i></span>
+          <span>
+            <span class="alert-heading mb-1 h5">Warning</span><br>
+            <span class="mb-0 p">By editing the permission name, you might break the system permissions functionality. Please ensure you're absolutely certain before proceeding.</span>
+          </span>
+        </div>
+        <form id="bodyEditPermission" class="row pt-2" method="POST", action="{{route('permission.edit')}}">
+          @CSRF
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 <!-- /Modal -->
 @endsection

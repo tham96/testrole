@@ -11,17 +11,19 @@ $(function () {
   // Users List datatable
   if (dataTablePermissions.length) {
     dt_permission = dataTablePermissions.DataTable({
-      ajax: assetsPath + 'json/permissions-list.json', // JSON file to add data
+      ajax: '/app/fetch-permission', // JSON file to add data
       columns: [
         // columns according to JSON
-        { data: 'name' },
-        { data: 'guard_name' },
-        { data: 'created_at' },
+        { data: '' },
+        { data: '' },
+        { data: '' },
+        { data: '' }
       ],
       columnDefs: [
         {
           // Name
           targets: 0,
+          title: 'Permision Name',
           render: function (data, type, full, meta) {
             var $name = full['name'];
             return '<span class="text-nowrap text-heading">' + $name + '</span>';
@@ -30,6 +32,7 @@ $(function () {
         {
           // User Role
           targets: 1,
+          title: 'Guard name',
           render: function (data, type, full, meta) {
             var $guard_name = full['guard_name']
             //   $output = '';
@@ -51,8 +54,9 @@ $(function () {
         {
           // remove ordering from Name
           targets: 2,
+          title: 'Created at',
           render: function (data, type, full, meta) {
-            var $created_at = full['created_at'];
+            var $created_at = "2024-09-17";
             return '<span class="text-nowrap">' + $created_at + '</span>';
           }
         },
@@ -65,12 +69,8 @@ $(function () {
           render: function (data, type, full, meta) {
             return (
               '<div class="d-flex align-items-center">' +
-              '<span class="text-nowrap"><button class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill me-1" data-bs-target="#editPermissionModal" data-bs-toggle="modal" data-bs-dismiss="modal"><i class="ti ti-edit ti-md"></i></button>' +
-              '<a href="javascript:;" class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical ti-md mx-1"></i></a>' +
-              '<div class="dropdown-menu dropdown-menu-end m-0">' +
-              '<a href="javascript:;"" class="dropdown-item">Edit</a>' +
-              '<a href="javascript:;" class="dropdown-item">Suspend</a>' +
-              '</div>' +
+              '<a href="javascript:;" class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill delete-record"><i class="ti ti-trash ti-md"></i></a>' +
+              '<button data-bs-target="#editPermissionModal" data-bs-toggle="modal" class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill edit-record"><i class="ti ti-pencil ti-md"></i></button>' +
               '</div>'
             );
           }
@@ -109,77 +109,64 @@ $(function () {
           }
         }
       ],
-      // For responsive popup
-      responsive: {
-        details: {
-          display: $.fn.dataTable.Responsive.display.modal({
-            header: function (row) {
-              var data = row.data();
-              return 'Details of ' + data['name'];
-            }
-          }),
-          type: 'column',
-          renderer: function (api, rowIdx, columns) {
-            var data = $.map(columns, function (col, i) {
-              return col.title !== '' // ? Do not show row in modal popup if title is blank (for check box)
-                ? '<tr data-dt-row="' +
-                    col.rowIndex +
-                    '" data-dt-column="' +
-                    col.columnIndex +
-                    '">' +
-                    '<td>' +
-                    col.title +
-                    ':' +
-                    '</td> ' +
-                    '<td>' +
-                    col.data +
-                    '</td>' +
-                    '</tr>'
-                : '';
-            }).join('');
-
-            return data ? $('<table class="table"/><tbody />').append(data) : false;
-          }
-        }
-      },
-      initComplete: function () {
-        // Adding role filter once table initialized
-        this.api()
-          .columns(3)
-          .every(function () {
-            var column = this;
-            var select = $(
-              '<select id="UserRole" class="form-select text-capitalize"><option value=""> Select Role </option></select>'
-            )
-              .appendTo('.user_role')
-              .on('change', function () {
-                var val = $.fn.dataTable.util.escapeRegex($(this).val());
-                column.search(val ? '^' + val + '$' : '', true, false).draw();
-              });
-
-            column
-              .data()
-              .unique()
-              .sort()
-              .each(function (d, j) {
-                select.append('<option value="' + d + '" class="text-capitalize">' + d + '</option>');
-              });
-          });
-      }
     });
   }
 
   // Delete Record
   $('.datatables-permissions tbody').on('click', '.delete-record', function () {
+    let index = dt_permission.row($(this).parents('tr'))[0][0];
+    let arayData = dt_permission.row($(this).parents('tr')).context[0].aoData;
+    let data = arayData[index]._aData;
+    $.ajax({
+      url: '/app/delete-permission',
+      type: 'GET',
+      data: {
+          id: data.id,
+      },
+      success: function(response) {
+        alert(response.message)
+      },
+      error: function(response) {
+          var jsonResponse = JSON.parse(response.responseText);
+          var data = jsonResponse.data;
+          alert(data);
+      }
+    })
+    
     dt_permission.row($(this).parents('tr')).remove().draw();
+  });
+
+  $('.datatables-permissions tbody').on('click', '.edit-record', function () {
+    let index = dt_permission.row($(this).parents('tr'))[0][0];
+    console.log(index);
+    let arayData = dt_permission.row($(this).parents('tr')).context[0].aoData;
+    console.log(arayData);
+    let data = arayData[index]._aData;
+    console.log(data);
+    $.ajax({
+      url: '/app/get-permission',
+      type: 'GET',
+      data: {
+          id: data.id,
+      },
+      success: function(response) {
+        $('#bodyEditPermission').html(response);
+        $('#editPermission').modal('show');
+      },
+      error: function(response) {
+          var jsonResponse = JSON.parse(response.responseText);
+          var data = jsonResponse.data;
+          alert(data);
+      }
+    });
   });
 
   // Filter form control to default size
   // ? setTimeout used for multilingual table initialization
   setTimeout(() => {
-    $('.dataTables_filter .form-control').removeClass('form-control-sm');
-    $('.dataTables_length .form-select').removeClass('form-select-sm');
-    $('.dataTables_info').addClass('ms-n1');
-    $('.dataTables_paginate').addClass('me-n1');
+    // $('.dataTables_filter .form-control').removeClass('form-control-sm');
+    // $('.dataTables_length .form-select').removeClass('form-select-sm');
+    // $('.dataTables_info').addClass('ms-n1');
+    // $('.dataTables_paginate').addClass('me-n1');
   }, 300);
 });

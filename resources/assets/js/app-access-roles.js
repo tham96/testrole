@@ -110,7 +110,7 @@ $(function () {
           id: data.id,
       },
       success: function(response) {
-        console.log(response.message)
+        alert(response.message)
       },
       error: function(response) {
           var jsonResponse = JSON.parse(response.responseText);

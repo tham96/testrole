@@ -236,6 +236,11 @@ Route::post('/app/edit-role', [AccessRoles::class, 'editRole'])->name('role.edit
 Route::get('/app/delete-role', [AccessRoles::class, 'deleteRole'])->name('role.delete');
 // Permission
 Route::get('/app/access-permission', [AccessPermission::class, 'index'])->name('app-access-permission');
+Route::get('/app/fetch-permission', [AccessPermission::class, 'fetchPermissions'])->name('app-fetch-permission');
+Route::get('/app/get-permission', [AccessPermission::class, 'getPermission'])->name('permission.get');
+Route::post('/app/add-permission', [AccessPermission::class, 'addPermission'])->name('permission.create');
+Route::post('/app/edit-permission', [AccessPermission::class, 'editPermission'])->name('permission.edit');
+Route::get('/app/delete-permission', [AccessPermission::class, 'deletePermission'])->name('permission.delete');
 // pages
 Route::get('/pages/profile-user', [UserProfile::class, 'index'])->name('pages-profile-user');
 Route::get('/pages/profile-teams', [UserTeams::class, 'index'])->name('pages-profile-teams');
