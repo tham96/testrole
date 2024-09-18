@@ -222,7 +222,12 @@ Route::get('/app/invoice/preview', [InvoicePreview::class, 'index'])->name('app-
 Route::get('/app/invoice/print', [InvoicePrint::class, 'index'])->name('app-invoice-print');
 Route::get('/app/invoice/edit', [InvoiceEdit::class, 'index'])->name('app-invoice-edit');
 Route::get('/app/invoice/add', [InvoiceAdd::class, 'index'])->name('app-invoice-add');
+//User
 Route::get('/app/user/list', [UserList::class, 'index'])->name('app-user-list');
+Route::get('/app/user/get', [UserList::class, 'get'])->name('app-user-get');
+Route::post('/app/user/add', [UserList::class, 'create'])->name('app-user-create');
+Route::post('/app/user/edit', [UserList::class, 'edit'])->name('app-user-edit');
+Route::get('/app/user/delete', [UserList::class, 'delete'])->name('app-user-delete');
 Route::get('/app/user/view/account', [UserViewAccount::class, 'index'])->name('app-user-view-account');
 Route::get('/app/user/view/security', [UserViewSecurity::class, 'index'])->name('app-user-view-security');
 Route::get('/app/user/view/billing', [UserViewBilling::class, 'index'])->name('app-user-view-billing');

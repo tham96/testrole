@@ -46,10 +46,8 @@ $(function () {
         { data: 'id' },
         { data: 'full_name' },
         { data: 'role' },
-        { data: 'current_plan' },
-        { data: 'billing' },
-        { data: 'status' },
-        { data: 'action' }
+        { data: 'email' },
+        { data: '' }
       ],
       columnDefs: [
         {
@@ -80,7 +78,7 @@ $(function () {
           targets: 2,
           responsivePriority: 4,
           render: function (data, type, full, meta) {
-            var $name = full['full_name'],
+            var $name = full['name'],
               $email = full['email'],
               $image = full['avatar'];
             if ($image) {
@@ -92,7 +90,7 @@ $(function () {
               var stateNum = Math.floor(Math.random() * 6);
               var states = ['success', 'danger', 'warning', 'info', 'primary', 'secondary'];
               var $state = states[stateNum],
-                $name = full['full_name'],
+                $name = full['name'],
                 $initials = $name.match(/\b\w/g) || [];
               $initials = (($initials.shift() || '') + ($initials.pop() || '')).toUpperCase();
               $output = '<span class="avatar-initial rounded-circle bg-label-' + $state + '">' + $initials + '</span>';
@@ -111,9 +109,6 @@ $(function () {
               '" class="text-heading text-truncate"><span class="fw-medium">' +
               $name +
               '</span></a>' +
-              '<small>' +
-              $email +
-              '</small>' +
               '</div>' +
               '</div>';
             return $row_output;
@@ -123,13 +118,13 @@ $(function () {
           // User Role
           targets: 3,
           render: function (data, type, full, meta) {
-            var $role = full['role'];
+            var $role = full['role'][0]['name'];
             var roleBadgeObj = {
               Subscriber: '<i class="ti ti-crown ti-md text-primary me-2"></i>',
-              Author: '<i class="ti ti-edit ti-md text-warning me-2"></i>',
-              Maintainer: '<i class="ti ti-user ti-md text-success me-2"></i>',
+              writer: '<i class="ti ti-edit ti-md text-warning me-2"></i>',
+              Super_Admin: '<i class="ti ti-user ti-md text-success me-2"></i>',
               Editor: '<i class="ti ti-chart-pie ti-md text-info me-2"></i>',
-              Admin: '<i class="ti ti-device-desktop ti-md text-danger me-2"></i>'
+              admin: '<i class="ti ti-device-desktop ti-md text-danger me-2"></i>'
             };
             return (
               "<span class='text-truncate d-flex align-items-center text-heading'>" +
@@ -143,24 +138,8 @@ $(function () {
           // Plans
           targets: 4,
           render: function (data, type, full, meta) {
-            var $plan = full['current_plan'];
-
-            return '<span class="text-heading">' + $plan + '</span>';
-          }
-        },
-        {
-          // User Status
-          targets: 6,
-          render: function (data, type, full, meta) {
-            var $status = full['status'];
-
-            return (
-              '<span class="badge ' +
-              statusObj[$status].class +
-              '" text-capitalized>' +
-              statusObj[$status].title +
-              '</span>'
-            );
+            var $email = full['email'];
+            return '<span class="text-heading">' + $email + '</span>';
           }
         },
         {
@@ -173,14 +152,7 @@ $(function () {
             return (
               '<div class="d-flex align-items-center">' +
               '<a href="javascript:;" class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill delete-record"><i class="ti ti-trash ti-md"></i></a>' +
-              '<a href="' +
-              userView +
-              '" class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill"><i class="ti ti-eye ti-md"></i></a>' +
-              '<a href="javascript:;" class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical ti-md"></i></a>' +
-              '<div class="dropdown-menu dropdown-menu-end m-0">' +
-              '<a href="javascript:;"" class="dropdown-item">Edit</a>' +
-              '<a href="javascript:;" class="dropdown-item">Suspend</a>' +
-              '</div>' +
+              '<button data-bs-target="#editRoleModal" data-bs-toggle="modal" class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill edit-record"><i class="ti ti-pencil ti-md"></i></button>' +
               '</div>'
             );
           }
@@ -207,146 +179,6 @@ $(function () {
       },
       // Buttons with Dropdown
       buttons: [
-        {
-          extend: 'collection',
-          className: 'btn btn-label-secondary dropdown-toggle mx-4 waves-effect waves-light',
-          text: '<i class="ti ti-upload me-2 ti-xs"></i>Export',
-          buttons: [
-            {
-              extend: 'print',
-              text: '<i class="ti ti-printer me-2" ></i>Print',
-              className: 'dropdown-item',
-              exportOptions: {
-                columns: [1, 2, 3, 4, 5],
-                // prevent avatar to be print
-                format: {
-                  body: function (inner, coldex, rowdex) {
-                    if (inner.length <= 0) return inner;
-                    var el = $.parseHTML(inner);
-                    var result = '';
-                    $.each(el, function (index, item) {
-                      if (item.classList !== undefined && item.classList.contains('user-name')) {
-                        result = result + item.lastChild.firstChild.textContent;
-                      } else if (item.innerText === undefined) {
-                        result = result + item.textContent;
-                      } else result = result + item.innerText;
-                    });
-                    return result;
-                  }
-                }
-              },
-              customize: function (win) {
-                //customize print view for dark
-                $(win.document.body)
-                  .css('color', headingColor)
-                  .css('border-color', borderColor)
-                  .css('background-color', bodyBg);
-                $(win.document.body)
-                  .find('table')
-                  .addClass('compact')
-                  .css('color', 'inherit')
-                  .css('border-color', 'inherit')
-                  .css('background-color', 'inherit');
-              }
-            },
-            {
-              extend: 'csv',
-              text: '<i class="ti ti-file-text me-2" ></i>Csv',
-              className: 'dropdown-item',
-              exportOptions: {
-                columns: [1, 2, 3, 4, 5],
-                // prevent avatar to be display
-                format: {
-                  body: function (inner, coldex, rowdex) {
-                    if (inner.length <= 0) return inner;
-                    var el = $.parseHTML(inner);
-                    var result = '';
-                    $.each(el, function (index, item) {
-                      if (item.classList !== undefined && item.classList.contains('user-name')) {
-                        result = result + item.lastChild.firstChild.textContent;
-                      } else if (item.innerText === undefined) {
-                        result = result + item.textContent;
-                      } else result = result + item.innerText;
-                    });
-                    return result;
-                  }
-                }
-              }
-            },
-            {
-              extend: 'excel',
-              text: '<i class="ti ti-file-spreadsheet me-2"></i>Excel',
-              className: 'dropdown-item',
-              exportOptions: {
-                columns: [1, 2, 3, 4, 5],
-                // prevent avatar to be display
-                format: {
-                  body: function (inner, coldex, rowdex) {
-                    if (inner.length <= 0) return inner;
-                    var el = $.parseHTML(inner);
-                    var result = '';
-                    $.each(el, function (index, item) {
-                      if (item.classList !== undefined && item.classList.contains('user-name')) {
-                        result = result + item.lastChild.firstChild.textContent;
-                      } else if (item.innerText === undefined) {
-                        result = result + item.textContent;
-                      } else result = result + item.innerText;
-                    });
-                    return result;
-                  }
-                }
-              }
-            },
-            {
-              extend: 'pdf',
-              text: '<i class="ti ti-file-code-2 me-2"></i>Pdf',
-              className: 'dropdown-item',
-              exportOptions: {
-                columns: [1, 2, 3, 4, 5],
-                // prevent avatar to be display
-                format: {
-                  body: function (inner, coldex, rowdex) {
-                    if (inner.length <= 0) return inner;
-                    var el = $.parseHTML(inner);
-                    var result = '';
-                    $.each(el, function (index, item) {
-                      if (item.classList !== undefined && item.classList.contains('user-name')) {
-                        result = result + item.lastChild.firstChild.textContent;
-                      } else if (item.innerText === undefined) {
-                        result = result + item.textContent;
-                      } else result = result + item.innerText;
-                    });
-                    return result;
-                  }
-                }
-              }
-            },
-            {
-              extend: 'copy',
-              text: '<i class="ti ti-copy me-2" ></i>Copy',
-              className: 'dropdown-item',
-              exportOptions: {
-                columns: [1, 2, 3, 4, 5],
-                // prevent avatar to be display
-                format: {
-                  body: function (inner, coldex, rowdex) {
-                    if (inner.length <= 0) return inner;
-                    var el = $.parseHTML(inner);
-                    var result = '';
-                    $.each(el, function (index, item) {
-                      if (item.classList !== undefined && item.classList.contains('user-name')) {
-                        result = result + item.lastChild.firstChild.textContent;
-                      } else if (item.innerText === undefined) {
-                        result = result + item.textContent;
-                      } else result = result + item.innerText;
-                    });
-                    return result;
-                  }
-                }
-              }
-            }
-          ]
-        },
         {
           text: '<i class="ti ti-plus me-0 me-sm-1 ti-xs"></i><span class="d-none d-sm-inline-block">Add New User</span>',
           className: 'add-new btn btn-primary waves-effect waves-light',
@@ -389,86 +221,56 @@ $(function () {
           }
         }
       },
-      initComplete: function () {
-        // Adding role filter once table initialized
-        this.api()
-          .columns(3)
-          .every(function () {
-            var column = this;
-            var select = $(
-              '<select id="UserRole" class="form-select text-capitalize"><option value=""> Select Role </option></select>'
-            )
-              .appendTo('.user_role')
-              .on('change', function () {
-                var val = $.fn.dataTable.util.escapeRegex($(this).val());
-                column.search(val ? '^' + val + '$' : '', true, false).draw();
-              });
-
-            column
-              .data()
-              .unique()
-              .sort()
-              .each(function (d, j) {
-                select.append('<option value="' + d + '">' + d + '</option>');
-              });
-          });
-        // Adding plan filter once table initialized
-        this.api()
-          .columns(4)
-          .every(function () {
-            var column = this;
-            var select = $(
-              '<select id="UserPlan" class="form-select text-capitalize"><option value=""> Select Plan </option></select>'
-            )
-              .appendTo('.user_plan')
-              .on('change', function () {
-                var val = $.fn.dataTable.util.escapeRegex($(this).val());
-                column.search(val ? '^' + val + '$' : '', true, false).draw();
-              });
-
-            column
-              .data()
-              .unique()
-              .sort()
-              .each(function (d, j) {
-                select.append('<option value="' + d + '">' + d + '</option>');
-              });
-          });
-        // Adding status filter once table initialized
-        this.api()
-          .columns(6)
-          .every(function () {
-            var column = this;
-            var select = $(
-              '<select id="FilterTransaction" class="form-select text-capitalize"><option value=""> Select Status </option></select>'
-            )
-              .appendTo('.user_status')
-              .on('change', function () {
-                var val = $.fn.dataTable.util.escapeRegex($(this).val());
-                column.search(val ? '^' + val + '$' : '', true, false).draw();
-              });
-
-            column
-              .data()
-              .unique()
-              .sort()
-              .each(function (d, j) {
-                select.append(
-                  '<option value="' +
-                    statusObj[d].title +
-                    '" class="text-capitalize">' +
-                    statusObj[d].title +
-                    '</option>'
-                );
-              });
-          });
-      }
     });
   }
 
   // Delete Record
   $('.datatables-users tbody').on('click', '.delete-record', function () {
+    let index = dt_user.row($(this).parents('tr'))[0][0];
+    let arayData = dt_user.row($(this).parents('tr')).context[0].aoData;
+    let data = arayData[index]._aData;
+    console.log(data);
+    var role = {}
+    $.ajax({
+      url: '/app/user/delete',
+      type: 'GET',
+      data: {
+          id: data.id,
+      },
+      success: function(response) {
+        alert(response.message)
+      },
+      error: function(response) {
+          var jsonResponse = JSON.parse(response.responseText);
+          var data = jsonResponse.data;
+          alert(data);
+      }
+    });
     dt_user.row($(this).parents('tr')).remove().draw();
+  });
+
+  $('.datatables-users tbody').on('click', '.edit-record', function () {
+    let index = dt_user.row($(this).parents('tr'))[0][0];
+    let arayData = dt_user.row($(this).parents('tr')).context[0].aoData;
+    let data = arayData[index]._aData;
+    console.log(data);
+    var role = {}
+    $.ajax({
+      url: '/app/user/get',
+      type: 'GET',
+      data: {
+          id: data.id,
+      },
+      success: function(response) {
+        $('#bodyEditUser').html(response);
+        $('#editUser').modal('show');
+      },
+      error: function(response) {
+          var jsonResponse = JSON.parse(response.responseText);
+          var data = jsonResponse.data;
+          alert(data);
+      }
+    });
   });
 
   // Filter form control to default size

@@ -1,6 +1,7 @@
 <?php
 
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 if (!function_exists('settings')) {
     /**
@@ -30,4 +31,9 @@ return Permission::select('name')->get();
 function getPermission()
 {
 return Permission::select('id', 'name')->get();
+}
+
+function getRole()
+{
+return Role::select('id', 'name')->get();
 }
