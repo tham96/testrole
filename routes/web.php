@@ -223,29 +223,11 @@ Route::get('/app/invoice/print', [InvoicePrint::class, 'index'])->name('app-invo
 Route::get('/app/invoice/edit', [InvoiceEdit::class, 'index'])->name('app-invoice-edit');
 Route::get('/app/invoice/add', [InvoiceAdd::class, 'index'])->name('app-invoice-add');
 //User
-Route::get('/app/user/list', [UserList::class, 'index'])->name('app-user-list');
-Route::get('/app/user/get', [UserList::class, 'get'])->name('app-user-get');
-Route::post('/app/user/add', [UserList::class, 'create'])->name('app-user-create');
-Route::post('/app/user/edit', [UserList::class, 'edit'])->name('app-user-edit');
-Route::get('/app/user/delete', [UserList::class, 'delete'])->name('app-user-delete');
 Route::get('/app/user/view/account', [UserViewAccount::class, 'index'])->name('app-user-view-account');
 Route::get('/app/user/view/security', [UserViewSecurity::class, 'index'])->name('app-user-view-security');
 Route::get('/app/user/view/billing', [UserViewBilling::class, 'index'])->name('app-user-view-billing');
 Route::get('/app/user/view/notifications', [UserViewNotifications::class, 'index'])->name('app-user-view-notifications');
 Route::get('/app/user/view/connections', [UserViewConnections::class, 'index'])->name('app-user-view-connections');
-// Role
-Route::get('/app/access-roles', [AccessRoles::class, 'index'])->name('app-access-roles');
-Route::get('/app/get-role', [AccessRoles::class, 'getRole'])->name('role.get');
-Route::post('/app/add-role', [AccessRoles::class, 'addRole'])->name('role.create');
-Route::post('/app/edit-role', [AccessRoles::class, 'editRole'])->name('role.edit');
-Route::get('/app/delete-role', [AccessRoles::class, 'deleteRole'])->name('role.delete');
-// Permission
-Route::get('/app/access-permission', [AccessPermission::class, 'index'])->name('app-access-permission');
-Route::get('/app/fetch-permission', [AccessPermission::class, 'fetchPermissions'])->name('app-fetch-permission');
-Route::get('/app/get-permission', [AccessPermission::class, 'getPermission'])->name('permission.get');
-Route::post('/app/add-permission', [AccessPermission::class, 'addPermission'])->name('permission.create');
-Route::post('/app/edit-permission', [AccessPermission::class, 'editPermission'])->name('permission.edit');
-Route::get('/app/delete-permission', [AccessPermission::class, 'deletePermission'])->name('permission.delete');
 // pages
 Route::get('/pages/profile-user', [UserProfile::class, 'index'])->name('pages-profile-user');
 Route::get('/pages/profile-teams', [UserTeams::class, 'index'])->name('pages-profile-teams');
@@ -372,3 +354,25 @@ Route::get('/maps/leaflet', [Leaflet::class, 'index'])->name('maps-leaflet');
 // laravel example
 Route::get('/laravel/user-management', [UserManagement::class, 'UserManagement'])->name('laravel-example-user-management');
 Route::resource('/user-list', UserManagement::class);
+
+Route::group(['middleware' => 'auth:sanctum'], function() {
+    // Role
+    Route::get('/app/access-roles', [AccessRoles::class, 'index'])->name('app-access-roles');
+    Route::get('/app/get-role', [AccessRoles::class, 'getRole'])->name('role.get');
+    Route::post('/app/add-role', [AccessRoles::class, 'addRole'])->name('role.create')->middleware('role:writer');
+    Route::post('/app/edit-role', [AccessRoles::class, 'editRole'])->name('role.edit')->middleware('role:writer');
+    Route::get('/app/delete-role', [AccessRoles::class, 'deleteRole'])->name('role.delete')->middleware('role:admin');
+    // Permission
+    Route::get('/app/access-permission', [AccessPermission::class, 'index'])->name('app-access-permission');
+    Route::get('/app/fetch-permission', [AccessPermission::class, 'fetchPermissions'])->name('app-fetch-permission');
+    Route::get('/app/get-permission', [AccessPermission::class, 'getPermission'])->name('permission.get');
+    Route::post('/app/add-permission', [AccessPermission::class, 'addPermission'])->name('permission.create')->middleware('role:writer');
+    Route::post('/app/edit-permission', [AccessPermission::class, 'editPermission'])->name('permission.edit')->middleware('role:writer');
+    Route::get('/app/delete-permission', [AccessPermission::class, 'deletePermission'])->name('permission.delete')->middleware('role:admin');
+    //User
+    Route::get('/app/user/list', [UserList::class, 'index'])->name('app-user-list');
+    Route::get('/app/user/get', [UserList::class, 'get'])->name('app-user-get');
+    Route::post('/app/user/add', [UserList::class, 'create'])->name('app-user-create')->middleware('role:writer');
+    Route::post('/app/user/edit', [UserList::class, 'edit'])->name('app-user-edit')->middleware('role:writer');
+    Route::get('/app/user/delete', [UserList::class, 'delete'])->name('app-user-delete')->middleware('role:admin');
+});
