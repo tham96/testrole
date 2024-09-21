@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\NestedSetModel;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -54,5 +55,17 @@ class DatabaseSeeder extends Seeder
             'email' => 'superadmin@example.com',
         ]);
         $user->assignRole($role3);
+
+        $node = NestedSetModel::create([
+            'name' => 'Root',
+            'children' => [
+                [
+                    'name' => 'A',
+                    'children' => [
+                        ['name' => 'C'],
+                    ],
+                ],
+            ],
+    ]);
     }
 }

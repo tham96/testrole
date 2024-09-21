@@ -422,7 +422,7 @@ $navbarDetached = ($navbarDetached ?? '');
                           John Doe
                         @endif
                       </h6>
-                      <small class="text-muted">Admin</small>
+                      <small class="text-muted">{{ Auth::user()->name }}</small>
                     </div>
                   </div>
                 </a>
@@ -501,13 +501,13 @@ $navbarDetached = ($navbarDetached ?? '');
               @if (Auth::check())
                 <li>
                   <div class="d-grid px-2 pt-2 pb-1">
-                    <a class="btn btn-sm btn-danger d-flex" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    <a class="btn btn-sm btn-danger d-flex" href="{{ route('app_logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                       <small class="align-middle">Logout</small>
                       <i class="ti ti-logout ms-2 ti-14px"></i>
                     </a>
                   </div>
                 </li>
-                <form method="POST" id="logout-form" action="{{ route('logout') }}">
+                <form method="POST" id="logout-form" action="{{ route('app_logout') }}">
                   @csrf
                 </form>
               @else

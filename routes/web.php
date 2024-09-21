@@ -1,4 +1,5 @@
 <?php
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\laravel_example\UserManagement;
 use App\Http\Controllers\dashboard\Analytics;
@@ -160,8 +161,7 @@ use App\Http\Controllers\charts\ChartJs;
 use App\Http\Controllers\maps\Leaflet;
 
 // Main Page Route
-Route::get('/', [Analytics::class, 'index'])->name('dashboard-analytics');
-Route::get('/dashboard/analytics', [Analytics::class, 'index'])->name('dashboard-analytics');
+
 Route::get('/dashboard/crm', [Crm::class, 'index'])->name('dashboard-crm');
 // locale
 Route::get('/lang/{locale}', [LanguageController::class, 'swap']);
@@ -359,20 +359,27 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     // Role
     Route::get('/app/access-roles', [AccessRoles::class, 'index'])->name('app-access-roles');
     Route::get('/app/get-role', [AccessRoles::class, 'getRole'])->name('role.get');
-    Route::post('/app/add-role', [AccessRoles::class, 'addRole'])->name('role.create')->middleware('role:writer');
-    Route::post('/app/edit-role', [AccessRoles::class, 'editRole'])->name('role.edit')->middleware('role:writer');
-    Route::get('/app/delete-role', [AccessRoles::class, 'deleteRole'])->name('role.delete')->middleware('role:admin');
+    Route::post('/app/add-role', [AccessRoles::class, 'addRole'])->name('role.create')->middleware('permission:edit articles, publish articles');
+    Route::post('/app/edit-role', [AccessRoles::class, 'editRole'])->name('role.edit')->middleware('permission:edit articles');
+    Route::get('/app/delete-role', [AccessRoles::class, 'deleteRole'])->name('role.delete')->middleware('permission:delete articles');
     // Permission
     Route::get('/app/access-permission', [AccessPermission::class, 'index'])->name('app-access-permission');
-    Route::get('/app/fetch-permission', [AccessPermission::class, 'fetchPermissions'])->name('app-fetch-permission');
+    Route::get('/app/fetch-permission', [AccessPermission::class, 'fetchPermissions'])->name('app_fetch_permission');
     Route::get('/app/get-permission', [AccessPermission::class, 'getPermission'])->name('permission.get');
-    Route::post('/app/add-permission', [AccessPermission::class, 'addPermission'])->name('permission.create')->middleware('role:writer');
-    Route::post('/app/edit-permission', [AccessPermission::class, 'editPermission'])->name('permission.edit')->middleware('role:writer');
-    Route::get('/app/delete-permission', [AccessPermission::class, 'deletePermission'])->name('permission.delete')->middleware('role:admin');
+    Route::post('/app/add-permission', [AccessPermission::class, 'addPermission'])->name('permission.create')->middleware('permission:edit articles, publish articles');
+    Route::post('/app/edit-permission', [AccessPermission::class, 'editPermission'])->name('permission.edit')->middleware('permission:edit articles');
+    Route::get('/app/delete-permission', [AccessPermission::class, 'deletePermission'])->name('permission.delete')->middleware('permission:delete articles');
     //User
     Route::get('/app/user/list', [UserList::class, 'index'])->name('app-user-list');
     Route::get('/app/user/get', [UserList::class, 'get'])->name('app-user-get');
-    Route::post('/app/user/add', [UserList::class, 'create'])->name('app-user-create')->middleware('role:writer');
-    Route::post('/app/user/edit', [UserList::class, 'edit'])->name('app-user-edit')->middleware('role:writer');
-    Route::get('/app/user/delete', [UserList::class, 'delete'])->name('app-user-delete')->middleware('role:admin');
+    Route::post('/app/user/add', [UserList::class, 'create'])->name('app-user-create')->middleware('permission:edit articles, publish articles');
+    Route::post('/app/user/edit', [UserList::class, 'edit'])->name('app-user-edit')->middleware('permission:edit articles');
+    Route::get('/app/user/delete', [UserList::class, 'delete'])->name('app-user-delete')->middleware('permission:delete articles');
+    
+    Route::get('/', [Analytics::class, 'index'])->name('dashboard-analytics');
+    Route::get('/dashboard/analytics', [Analytics::class, 'index'])->name('dashboard-analytics');
+
+    Route::post('/app-logout', [AuthController::class, 'logout'])->name('app_logout');
+
 });
+Route::post('/app-login', [AuthController::class, 'login'])->name('app-login');
